@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->index();
             $table->string('name');
-            $table->string('slug')->unique()->after('name');
+            $table->string('slug')->unique();
             $table->boolean('personal_team');
-            $table->timestamp('onboarded_at')->nullable()->after('personal_team');
+            $table->timestamp('onboarded_at')->nullable();
             $table->string('stripe_id')->nullable()->index();
             $table->string('pm_type')->nullable();
             $table->string('pm_last_four')->nullable();
