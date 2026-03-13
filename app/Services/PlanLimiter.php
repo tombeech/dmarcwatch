@@ -13,14 +13,14 @@ class PlanLimiter
         if ($team->subscribed('default')) {
             $price = $team->subscription('default')?->stripe_price;
 
-            $enterprisePrices = $this->collectPriceIds('enterprise_monthly', 'enterprise_yearly');
-            $proPrices = $this->collectPriceIds('pro_monthly', 'pro_yearly');
+            $enterprisePrice = config('dmarcwatch.stripe.prices.enterprise_monthly');
+            $proPrice = config('dmarcwatch.stripe.prices.pro_monthly');
 
-            if (in_array($price, $enterprisePrices, true)) {
+            if ($enterprisePrice && $price === $enterprisePrice) {
                 return SubscriptionPlan::ENTERPRISE;
             }
 
-            if (in_array($price, $proPrices, true)) {
+            if ($proPrice && $price === $proPrice) {
                 return SubscriptionPlan::PRO;
             }
 
@@ -33,16 +33,11 @@ class PlanLimiter
     protected function collectPriceIds(string ...$keys): array
     {
         $prices = [];
-        $currencies = config('dmarcwatch.stripe.prices', []);
 
-        foreach ($currencies as $currencyPrices) {
-            if (! is_array($currencyPrices)) {
-                continue;
-            }
-            foreach ($keys as $key) {
-                if (! empty($currencyPrices[$key])) {
-                    $prices[] = $currencyPrices[$key];
-                }
+        foreach ($keys as $key) {
+            $price = config("dmarcwatch.stripe.prices.{$key}");
+            if (! empty($price)) {
+                $prices[] = $price;
             }
         }
 
@@ -103,16 +98,9 @@ class PlanLimiter
 
     protected function collectAddonPriceIds(): array
     {
-        $prices = [];
-        $currencies = config('dmarcwatch.stripe.prices', []);
+        $price = config('dmarcwatch.stripe.prices.domain_addon');
 
-        foreach ($currencies as $currencyPrices) {
-            if (! empty($currencyPrices['domain_addon'])) {
-                $prices[] = $currencyPrices['domain_addon'];
-            }
-        }
-
-        return array_unique($prices);
+        return $price ? [$price] : [];
     }
 
     public function canAddDomain(Team $team): bool

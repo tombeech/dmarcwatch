@@ -80,11 +80,10 @@ class Onboarding extends Component
     public function subscribe(string $plan, int $extraBundles = 0): void
     {
         $team = auth()->user()->currentTeam;
-        $suffix = CurrencyHelper::stripeCurrencySuffix();
 
         $priceIds = [
-            'pro' => config("dmarcwatch.stripe.prices.{$suffix}.pro_monthly", 'price_pro'),
-            'enterprise' => config("dmarcwatch.stripe.prices.{$suffix}.enterprise_monthly", 'price_enterprise'),
+            'pro' => config('dmarcwatch.stripe.prices.pro_monthly'),
+            'enterprise' => config('dmarcwatch.stripe.prices.enterprise_monthly'),
         ];
 
         if (! isset($priceIds[$plan])) {
@@ -95,7 +94,7 @@ class Onboarding extends Component
             $builder = $team->newSubscription('default', $priceIds[$plan]);
 
             if ($plan === 'enterprise' && $extraBundles > 0) {
-                $addonPriceId = config("dmarcwatch.stripe.prices.{$suffix}.domain_addon");
+                $addonPriceId = config('dmarcwatch.stripe.prices.domain_addon');
                 if ($addonPriceId) {
                     $builder->price($addonPriceId, $extraBundles);
                 }

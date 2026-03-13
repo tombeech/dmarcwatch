@@ -14,11 +14,10 @@ class BillingPage extends Component
     public function subscribe(string $plan): void
     {
         $team = auth()->user()->currentTeam;
-        $suffix = CurrencyHelper::stripeCurrencySuffix();
 
         $priceIds = [
-            'pro' => config("dmarcwatch.stripe.prices.{$suffix}.pro_monthly"),
-            'enterprise' => config("dmarcwatch.stripe.prices.{$suffix}.enterprise_monthly"),
+            'pro' => config('dmarcwatch.stripe.prices.pro_monthly'),
+            'enterprise' => config('dmarcwatch.stripe.prices.enterprise_monthly'),
         ];
 
         if (! isset($priceIds[$plan])) {
@@ -88,14 +87,35 @@ class BillingPage extends Component
         $team = auth()->user()->currentTeam;
         $currency = CurrencyHelper::pricing();
         $plan = app(PlanLimiter::class)->getPlan($team);
-        $limits = app(PlanLimiter::class)->limits($team);
+        $planLimits = app(PlanLimiter::class)->limits($team);
         $subscription = $team->subscription('default');
+
+        $limits = [
+            'domains' => $planLimits->maxDomains === PHP_INT_MAX ? -1 : $planLimits->maxDomains,
+            'reports' => $planLimits->maxReportsPerMonth === PHP_INT_MAX ? -1 : $planLimits->maxReportsPerMonth,
+            'channels' => $planLimits->maxAlertChannels === PHP_INT_MAX ? -1 : $planLimits->maxAlertChannels,
+            'retention_days' => $planLimits->retentionDays ?? 'Unlimited',
+        ];
+
+        $usage = [
+            'domains' => $team->domains()->count(),
+            'reports' => $team->dmarcReports()->whereMonth('received_at', now()->month)->whereYear('received_at', now()->year)->count(),
+            'channels' => $team->alertChannels()->count(),
+        ];
+
+        try {
+            $invoices = $team->stripe_id ? $team->invoices() : collect();
+        } catch (\Throwable) {
+            $invoices = collect();
+        }
 
         return view('livewire.billing.billing-page', [
             'currency' => $currency,
-            'currentPlan' => $plan,
+            'currentPlan' => $plan->value,
             'limits' => $limits,
+            'usage' => $usage,
             'subscription' => $subscription,
+            'invoices' => $invoices,
         ]);
     }
 }

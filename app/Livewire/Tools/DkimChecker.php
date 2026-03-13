@@ -13,6 +13,7 @@ class DkimChecker extends Component
     public string $selector = 'default';
     public ?array $result = null;
     public ?string $error = null;
+    public ?array $commonSelectorResults = null;
 
     public function check(): void
     {
@@ -27,6 +28,18 @@ class DkimChecker extends Component
         $this->error = null;
         $verifier = app(DkimVerifier::class);
         $this->result = $verifier->verify($domain, $selector);
+
+        $commonSelectors = ['default', 'google', 'selector1', 'selector2', 'k1', 'mandrill', 'everlytickey1', 'everlytickey2', 'dkim', 'mail'];
+        $this->commonSelectorResults = [];
+        foreach ($commonSelectors as $cs) {
+            $check = $verifier->verify($domain, $cs);
+            $this->commonSelectorResults[] = [
+                'selector' => $cs,
+                'found' => $check['found'],
+                'key_length' => isset($check['tags']['p']) ? strlen(base64_decode($check['tags']['p'])) * 8 : null,
+                'key_type' => $check['tags']['k'] ?? ($check['found'] ? 'rsa' : null),
+            ];
+        }
     }
 
     public function render()

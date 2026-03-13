@@ -23,9 +23,12 @@ class SourceIndex extends Component
         $authorized = $sources->filter(fn ($s) => $s->sendingSource !== null);
         $unknown = $sources->filter(fn ($s) => $s->sendingSource === null);
 
+        $availableDomains = \App\Models\Domain::where('team_id', $team->id)->orderBy('name')->get();
+
         return view('livewire.sources.source-index', [
-            'authorized' => $authorized,
-            'unknown' => $unknown,
+            'authorizedSources' => $authorized,
+            'unknownSources' => $unknown,
+            'availableDomains' => $availableDomains,
         ]);
     }
 }

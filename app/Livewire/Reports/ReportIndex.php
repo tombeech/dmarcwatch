@@ -52,6 +52,7 @@ class ReportIndex extends Component
         return view('livewire.reports.report-index', [
             'reports' => $reports,
             'domains' => $domains,
+            'availableDomains' => $domains,
         ]);
     }
 }
