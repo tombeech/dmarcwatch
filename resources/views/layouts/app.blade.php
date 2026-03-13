@@ -4,29 +4,47 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <title>{{ config('app.name', 'DMARCWatch') }}</title>
         <meta name="robots" content="noindex, nofollow">
+
+        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- Styles -->
         @livewireStyles
-        <style>body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }</style>
+
+        <style>
+            body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+        </style>
     </head>
     <body class="font-sans antialiased bg-cream-100">
         <x-banner />
+
         <div class="min-h-screen flex flex-col">
             @livewire('navigation-menu')
+
+            <!-- Page Content -->
             <main class="flex-1">
                 @if (isset($header))
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-2">
-                        <div class="mb-6">{{ $header }}</div>
+                        <div class="mb-6">
+                            {{ $header }}
+                        </div>
                     </div>
                 @endif
+
                 {{ $slot }}
             </main>
         </div>
+
         @stack('modals')
+
         @livewireScripts
     </body>
 </html>
