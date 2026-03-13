@@ -122,17 +122,15 @@ Sign up at https://dashboard.stripe.com
 
 #### 2. Create Products & Prices
 
-Create 5 products in Stripe. Each product has a single price with **multi-currency** pricing (USD, GBP, EUR configured on the same price):
+Create 3 products in Stripe. Each product has a single price in GBP with **multi-currency** enabled (Stripe auto-converts for other currencies):
 
-| Product | USD | GBP | EUR |
-|---------|-----|-----|-----|
-| Pro Monthly | $24/mo | £19/mo | €22/mo |
-| Pro Yearly | $240/yr | £190/yr | €220/yr |
-| Enterprise Monthly | $79/mo | £59/mo | €69/mo |
-| Enterprise Yearly | $790/yr | £590/yr | €690/yr |
-| Domain Add-on | $20/mo | £15/mo | €18/mo |
+| Product | Base Price (GBP) |
+|---------|-----------------|
+| Pro Monthly | £24/mo |
+| Enterprise Monthly | £79/mo |
+| Domain Add-on | £20/mo per 25 domains |
 
-Each product = 1 price ID (Stripe handles currency conversion automatically).
+Each product = 1 price ID. Stripe handles currency conversion automatically.
 
 #### 3. Set Environment Variables
 
