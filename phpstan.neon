@@ -1,0 +1,36 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+    level: 5
+    ignoreErrors:
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\(Builder|Model)#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model#'
+        - '#Access to an undefined property (Stripe|Laravel)\\(Cashier\\)?Subscription#'
+        - '#Cannot access property .* on string#'
+        - '#Offset .* on string on left side of \?\? does not exist#'
+        -
+            message: '#.*#'
+            path: app/Actions/Jetstream/*
+        -
+            message: '#Parameter .* of (method|static method) App\\Services\\PlanLimiter#'
+            paths:
+                - app/Http/Middleware/*
+                - app/Livewire/*
+        -
+            message: '#Call to an undefined static method#'
+            path: app/Http/Controllers/Webhooks/*
+        - '#Access to an undefined property App\\Http\\Resources\\#'
+        - '#Unsafe usage of new static#'
+        - '#PHPDoc type array.* is not covariant with PHPDoc type list#'
+        - '#Using nullsafe property access on non-nullable type#'
+        -
+            message: '#expects App\\Models\\Team, Illuminate\\Database\\Eloquent\\Model#'
+            path: app/Livewire/*
+        -
+            message: '#(expects array, string given|invalid type string supplied for foreach)#'
+            paths:
+                - app/Services/AlertDispatcher.php
+                - app/Services/SendingSourceResolver.php

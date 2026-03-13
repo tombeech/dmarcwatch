@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feedback>
+  <report_metadata>
+    <org_name>Microsoft Corporation</org_name>
+    <email>dmarcreport@microsoft.com</email>
+    <report_id>98765432109876543210</report_id>
+    <date_range><begin>1710288000</begin><end>1710374400</end></date_range>
+  </report_metadata>
+  <policy_published>
+    <domain>example.com</domain>
+    <adkim>r</adkim>
+    <aspf>r</aspf>
+    <p>reject</p>
+    <sp>reject</sp>
+    <pct>100</pct>
+  </policy_published>
+  <record>
+    <row>
+      <source_ip>40.92.10.50</source_ip>
+      <count>800</count>
+      <policy_evaluated><disposition>none</disposition><dkim>pass</dkim><spf>pass</spf></policy_evaluated>
+    </row>
+    <identifiers><header_from>example.com</header_from><envelope_from>example.com</envelope_from></identifiers>
+    <auth_results>
+      <dkim><domain>example.com</domain><result>pass</result><selector>selector1</selector></dkim>
+      <spf><domain>example.com</domain><result>pass</result></spf>
+    </auth_results>
+  </record>
+  <record>
+    <row>
+      <source_ip>10.0.0.1</source_ip>
+      <count>3</count>
+      <policy_evaluated><disposition>reject</disposition><dkim>fail</dkim><spf>fail</spf></policy_evaluated>
+    </row>
+    <identifiers><header_from>example.com</header_from><envelope_from>attacker.com</envelope_from></identifiers>
+    <auth_results>
+      <dkim><domain>attacker.com</domain><result>fail</result></dkim>
+      <spf><domain>attacker.com</domain><result>fail</result></spf>
+    </auth_results>
+  </record>
+</feedback>
