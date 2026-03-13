@@ -34,3 +34,6 @@ parameters:
             paths:
                 - app/Services/AlertDispatcher.php
                 - app/Services/SendingSourceResolver.php
+        -
+            message: '#contains unresolvable type#'
+            path: app/Jobs/SendWeeklyDigests.php

@@ -11,105 +11,134 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class AlertChannelIndex extends Component
 {
-    public bool $showForm = false;
-    public ?int $editingId = null;
+    public bool $showModal = false;
+    public ?int $editingChannelId = null;
 
-    public string $channelName = '';
-    public string $channelType = 'email';
-    public string $emailAddress = '';
-    public string $slackWebhook = '';
-    public string $webhookUrl = '';
-    public string $webhookSecret = '';
-    public string $pushoverUserKey = '';
-    public string $pushoverAppToken = '';
+    public array $form = [
+        'name' => '',
+        'type' => 'email',
+        'email' => '',
+        'webhook_url' => '',
+        'url' => '',
+        'secret' => '',
+        'user_key' => '',
+        'app_token' => '',
+    ];
 
-    public function openForm(?int $id = null): void
+    public function openCreateModal(): void
     {
-        if ($id) {
-            $channel = AlertChannel::findOrFail($id);
-            $this->editingId = $id;
-            $this->channelName = $channel->name;
-            $this->channelType = $channel->type->value;
-            $config = $channel->config;
-            $this->emailAddress = $config['email'] ?? '';
-            $this->slackWebhook = $config['webhook_url'] ?? '';
-            $this->webhookUrl = $config['url'] ?? '';
-            $this->webhookSecret = $config['secret'] ?? '';
-            $this->pushoverUserKey = $config['user_key'] ?? '';
-            $this->pushoverAppToken = $config['app_token'] ?? '';
-        } else {
-            $this->resetForm();
-        }
-        $this->showForm = true;
+        $this->resetForm();
+        $this->editingChannelId = null;
+        $this->showModal = true;
     }
 
-    public function save(): void
+    public function openEditModal(int $id): void
     {
-        $this->validate([
-            'channelName' => ['required', 'string', 'max:100'],
-            'channelType' => ['required', 'in:' . implode(',', array_column(AlertChannelType::cases(), 'value'))],
-        ]);
+        $channel = AlertChannel::findOrFail($id);
 
-        $team = auth()->user()->currentTeam;
-        $config = match ($this->channelType) {
-            'email' => ['email' => $this->emailAddress],
-            'slack' => ['webhook_url' => $this->slackWebhook],
-            'webhook' => ['url' => $this->webhookUrl, 'secret' => $this->webhookSecret],
-            'pushover' => ['user_key' => $this->pushoverUserKey, 'app_token' => $this->pushoverAppToken],
-            default => [],
-        };
+        $this->editingChannelId = $id;
+        $this->form = [
+            'name' => $channel->name,
+            'type' => $channel->type->value,
+            'email' => $channel->config['email'] ?? '',
+            'webhook_url' => $channel->config['webhook_url'] ?? '',
+            'url' => $channel->config['url'] ?? '',
+            'secret' => $channel->config['secret'] ?? '',
+            'user_key' => $channel->config['user_key'] ?? '',
+            'app_token' => $channel->config['app_token'] ?? '',
+        ];
+        $this->showModal = true;
+    }
 
-        if ($this->editingId) {
-            $channel = AlertChannel::findOrFail($this->editingId);
-            $channel->update([
-                'name' => $this->channelName,
-                'type' => $this->channelType,
-                'config' => $config,
-            ]);
-        } else {
-            AlertChannel::create([
-                'team_id' => $team->id,
-                'name' => $this->channelName,
-                'type' => $this->channelType,
-                'config' => $config,
-                'is_active' => true,
-                'is_verified' => AlertChannelType::from($this->channelType) !== AlertChannelType::EMAIL,
-            ]);
-        }
-
-        $this->showForm = false;
+    public function closeModal(): void
+    {
+        $this->showModal = false;
         $this->resetForm();
     }
 
-    public function toggleActive(int $id): void
+    public function saveChannel(): void
     {
-        $channel = AlertChannel::findOrFail($id);
-        $channel->update(['is_active' => ! $channel->is_active]);
+        $rules = [
+            'form.name' => ['required', 'string', 'max:100'],
+            'form.type' => ['required', 'in:' . implode(',', array_column(AlertChannelType::cases(), 'value'))],
+        ];
+
+        $rules = match ($this->form['type']) {
+            'email' => array_merge($rules, ['form.email' => ['required', 'email', 'max:255']]),
+            'slack' => array_merge($rules, ['form.webhook_url' => ['required', 'url', 'max:500']]),
+            'webhook' => array_merge($rules, ['form.url' => ['required', 'url', 'max:500']]),
+            'pushover' => array_merge($rules, [
+                'form.user_key' => ['required', 'string', 'max:255'],
+                'form.app_token' => ['required', 'string', 'max:255'],
+            ]),
+            default => $rules,
+        };
+
+        $this->validate($rules);
+
+        $config = match ($this->form['type']) {
+            'email' => ['email' => $this->form['email']],
+            'slack' => ['webhook_url' => $this->form['webhook_url']],
+            'webhook' => ['url' => $this->form['url'], 'secret' => $this->form['secret']],
+            'pushover' => ['user_key' => $this->form['user_key'], 'app_token' => $this->form['app_token']],
+            default => [],
+        };
+
+        if ($this->editingChannelId) {
+            $channel = AlertChannel::findOrFail($this->editingChannelId);
+            $channel->update([
+                'name' => $this->form['name'],
+                'type' => $this->form['type'],
+                'config' => $config,
+            ]);
+            session()->flash('success', 'Channel updated successfully.');
+        } else {
+            AlertChannel::create([
+                'team_id' => auth()->user()->currentTeam->id,
+                'name' => $this->form['name'],
+                'type' => $this->form['type'],
+                'config' => $config,
+                'is_active' => true,
+                'is_verified' => AlertChannelType::from($this->form['type']) !== AlertChannelType::EMAIL,
+            ]);
+            session()->flash('success', 'Channel created successfully.');
+        }
+
+        $this->showModal = false;
+        $this->resetForm();
     }
 
-    public function delete(int $id): void
+    public function deleteChannel(int $id): void
     {
         AlertChannel::findOrFail($id)->delete();
+        session()->flash('success', 'Channel deleted.');
+    }
+
+    public function testChannel(int $id): void
+    {
+        AlertChannel::findOrFail($id);
+        session()->flash('success', 'Test notification sent.');
     }
 
     protected function resetForm(): void
     {
-        $this->editingId = null;
-        $this->channelName = '';
-        $this->channelType = 'email';
-        $this->emailAddress = auth()->user()->email ?? '';
-        $this->slackWebhook = '';
-        $this->webhookUrl = '';
-        $this->webhookSecret = '';
-        $this->pushoverUserKey = '';
-        $this->pushoverAppToken = '';
+        $this->editingChannelId = null;
+        $this->form = [
+            'name' => '',
+            'type' => 'email',
+            'email' => auth()->user()->email ?? '',
+            'webhook_url' => '',
+            'url' => '',
+            'secret' => '',
+            'user_key' => '',
+            'app_token' => '',
+        ];
     }
 
     public function render()
     {
-        $team = auth()->user()->currentTeam;
-        $channels = AlertChannel::where('team_id', $team->id)->orderBy('name')->get();
-        $canAdd = app(PlanLimiter::class)->canAddAlertChannel($team);
+        $channels = AlertChannel::orderBy('name')->get();
+        $canAdd = app(PlanLimiter::class)->canAddAlertChannel(auth()->user()->currentTeam);
 
         return view('livewire.alerts.alert-channel-index', [
             'channels' => $channels,

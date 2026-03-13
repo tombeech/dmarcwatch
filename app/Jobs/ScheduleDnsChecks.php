@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Jobs\CheckDomainDns;
 use App\Models\Domain;
 use Illuminate\Support\Facades\Log;
 

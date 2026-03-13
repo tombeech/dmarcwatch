@@ -18,7 +18,6 @@
             <table class="min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                         <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
                         <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Channel</th>
                         <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Domain</th>
@@ -30,9 +29,8 @@
                 <tbody class="divide-y divide-gray-50">
                     @forelse($rules as $rule)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-5 py-3 text-sm font-medium text-forest-900">{{ $rule->name }}</td>
                             <td class="px-5 py-3">
-                                <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-forest-100 text-forest-700">{{ str_replace('_', ' ', ucfirst($rule->event_type)) }}</span>
+                                <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-forest-100 text-forest-700">{{ str_replace('_', ' ', ucfirst($rule->event_types[0] ?? 'unknown')) }}</span>
                             </td>
                             <td class="px-5 py-3 text-sm text-gray-600">{{ $rule->alertChannel?->name ?? '—' }}</td>
                             <td class="px-5 py-3 text-sm text-gray-600">{{ $rule->domain?->name ?? 'All domains' }}</td>
@@ -57,7 +55,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-5 py-12 text-center text-gray-500">
+                            <td colspan="6" class="px-5 py-12 text-center text-gray-500">
                                 No alert rules configured. <button wire:click="openCreateModal" class="text-lime-600 hover:text-lime-700 font-medium">Create your first rule</button>.
                             </td>
                         </tr>
@@ -79,19 +77,11 @@
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Rule name</label>
-                        <input type="text" wire:model="form.name" placeholder="e.g. Low compliance alert" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500">
-                        @error('form.name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Event type</label>
                         <select wire:model.live="form.event_type" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500">
-                            <option value="compliance_drop">Compliance drops below threshold</option>
-                            <option value="new_source">New sending source detected</option>
-                            <option value="dns_change">DNS record change</option>
-                            <option value="report_received">Report received</option>
-                            <option value="policy_failure">Policy failure detected</option>
+                            @foreach($eventTypes as $eventType)
+                                <option value="{{ $eventType->value }}">{{ str_replace('_', ' ', ucfirst($eventType->value)) }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -116,7 +106,7 @@
                         </select>
                     </div>
 
-                    @if(in_array($form['event_type'] ?? '', ['compliance_drop']))
+                    @if(($form['event_type'] ?? '') === 'compliance_drop')
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Threshold (%)</label>
                             <input type="number" wire:model="form.threshold_value" min="0" max="100" placeholder="e.g. 80" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500">
@@ -124,12 +114,6 @@
                             @error('form.threshold_value') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                     @endif
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Cooldown (minutes)</label>
-                        <input type="number" wire:model="form.cooldown_minutes" min="0" placeholder="60" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500">
-                        <p class="text-xs text-gray-500 mt-1">Minimum time between alerts for the same rule.</p>
-                    </div>
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">

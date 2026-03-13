@@ -37,6 +37,8 @@ class DmarcReport extends Model
             'date_end' => 'datetime',
             'received_at' => 'datetime',
             'processed_at' => 'datetime',
+            'domain_policy' => \App\Enums\DmarcPolicy::class,
+            'subdomain_policy' => \App\Enums\DmarcPolicy::class,
         ];
     }
 

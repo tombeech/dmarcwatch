@@ -16,7 +16,6 @@
                         <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                         <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Destination</th>
                         <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                        <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Used</th>
                         <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
@@ -43,7 +42,6 @@
                                     {{ $channel->is_verified ? 'Verified' : 'Unverified' }}
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-xs text-gray-500">{{ $channel->last_used_at?->diffForHumans() ?? 'Never' }}</td>
                             <td class="px-5 py-3">
                                 <div class="flex items-center gap-3">
                                     <button wire:click="testChannel({{ $channel->id }})" class="text-xs text-lime-600 hover:text-lime-700 font-medium">Test</button>
@@ -54,7 +52,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-12 text-center text-gray-500">
+                            <td colspan="5" class="px-5 py-12 text-center text-gray-500">
                                 No alert channels configured. <button wire:click="openCreateModal" class="text-lime-600 hover:text-lime-700 font-medium">Add your first channel</button>.
                             </td>
                         </tr>

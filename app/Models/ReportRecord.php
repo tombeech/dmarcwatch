@@ -28,6 +28,7 @@ class ReportRecord extends Model
         return [
             'dkim_aligned' => 'boolean',
             'spf_aligned' => 'boolean',
+            'disposition' => \App\Enums\Disposition::class,
         ];
     }
 

@@ -55,6 +55,19 @@ class DomainController extends Controller
         return response()->json(null, 204);
     }
 
+    public function update(Request $request, Domain $domain): DomainResource
+    {
+        $validated = $request->validate([
+            'is_active' => ['sometimes', 'boolean'],
+            'dns_check_interval_minutes' => ['sometimes', 'integer', 'min:60'],
+            'dkim_selectors' => ['sometimes', 'array'],
+        ]);
+
+        $domain->update($validated);
+
+        return new DomainResource($domain->fresh());
+    }
+
     public function checkDns(Domain $domain): JsonResponse
     {
         CheckDomainDns::dispatch($domain);

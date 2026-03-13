@@ -12,70 +12,107 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class AlertRuleIndex extends Component
 {
-    public bool $showForm = false;
-    public ?int $editingId = null;
+    public bool $showModal = false;
+    public ?int $editingRuleId = null;
 
-    public ?int $channelId = null;
-    public ?int $domainId = null;
-    public array $eventTypes = [];
+    public array $form = [
+        'name' => '',
+        'event_type' => 'compliance_drop',
+        'channel_id' => '',
+        'domain_id' => '',
+        'threshold_value' => '',
+        'is_active' => true,
+    ];
 
-    public function openForm(?int $id = null): void
+    public function openCreateModal(): void
     {
-        if ($id) {
-            $rule = AlertRule::findOrFail($id);
-            $this->editingId = $id;
-            $this->channelId = $rule->alert_channel_id;
-            $this->domainId = $rule->domain_id;
-            $this->eventTypes = $rule->event_types ?? [];
-        } else {
-            $this->resetForm();
-        }
-        $this->showForm = true;
+        $this->resetForm();
+        $this->showModal = true;
     }
 
-    public function save(): void
+    public function openEditModal(int $id): void
+    {
+        $rule = AlertRule::findOrFail($id);
+        $this->editingRuleId = $id;
+        $this->form = [
+            'name' => $this->describeRule($rule),
+            'event_type' => $rule->event_types[0] ?? 'compliance_drop',
+            'channel_id' => $rule->alert_channel_id ?? '',
+            'domain_id' => $rule->domain_id ?? '',
+            'threshold_value' => $rule->threshold_value ?? '',
+            'is_active' => $rule->is_active,
+        ];
+        $this->showModal = true;
+    }
+
+    public function closeModal(): void
+    {
+        $this->showModal = false;
+        $this->resetForm();
+    }
+
+    public function saveRule(): void
     {
         $this->validate([
-            'channelId' => ['required', 'exists:alert_channels,id'],
+            'form.event_type' => ['required', 'string'],
+            'form.channel_id' => ['required', 'exists:alert_channels,id'],
+            'form.domain_id' => ['nullable', 'exists:domains,id'],
+            'form.threshold_value' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ]);
 
         $team = auth()->user()->currentTeam;
+        $eventType = $this->form['event_type'];
 
         $data = [
             'team_id' => $team->id,
-            'alert_channel_id' => $this->channelId,
-            'domain_id' => $this->domainId,
-            'event_types' => ! empty($this->eventTypes) ? $this->eventTypes : null,
-            'is_active' => true,
+            'alert_channel_id' => $this->form['channel_id'],
+            'domain_id' => $this->form['domain_id'] ?: null,
+            'event_types' => [$eventType],
+            'threshold_type' => $eventType === 'compliance_drop' ? 'compliance_below' : null,
+            'threshold_value' => $eventType === 'compliance_drop' ? $this->form['threshold_value'] : null,
+            'is_active' => $this->form['is_active'] ?? true,
         ];
 
-        if ($this->editingId) {
-            AlertRule::findOrFail($this->editingId)->update($data);
+        if ($this->editingRuleId) {
+            AlertRule::findOrFail($this->editingRuleId)->update($data);
         } else {
             AlertRule::create($data);
         }
 
-        $this->showForm = false;
+        $this->showModal = false;
         $this->resetForm();
     }
 
-    public function toggleActive(int $id): void
+    public function toggleRule(int $id): void
     {
         $rule = AlertRule::findOrFail($id);
         $rule->update(['is_active' => ! $rule->is_active]);
     }
 
-    public function delete(int $id): void
+    public function deleteRule(int $id): void
     {
         AlertRule::findOrFail($id)->delete();
     }
 
     protected function resetForm(): void
     {
-        $this->editingId = null;
-        $this->channelId = null;
-        $this->domainId = null;
-        $this->eventTypes = array_column(DmarcEventType::cases(), 'value');
+        $this->editingRuleId = null;
+        $this->form = [
+            'name' => '',
+            'event_type' => 'compliance_drop',
+            'channel_id' => '',
+            'domain_id' => '',
+            'threshold_value' => '',
+            'is_active' => true,
+        ];
+    }
+
+    protected function describeRule(AlertRule $rule): string
+    {
+        $eventType = $rule->event_types[0] ?? 'unknown';
+        $label = str_replace('_', ' ', ucfirst($eventType));
+
+        return $label;
     }
 
     public function render()

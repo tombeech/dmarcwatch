@@ -36,7 +36,15 @@ class ComplianceScorer
         }
 
         // DKIM pass rate (25%)
-        $dkimPassRate = $spfPassRate; // Simplified — in production, calculate from records
+        $records = $domain->dmarcReports()
+            ->where('created_at', '>=', now()->subDays(30))
+            ->with('records')
+            ->get()
+            ->pluck('records')
+            ->flatten();
+        $totalRecordCount = $records->sum('count');
+        $dkimPassCount = $records->where('dkim_result', 'pass')->sum('count');
+        $dkimPassRate = $totalRecordCount > 0 ? ($dkimPassCount / $totalRecordCount) * 100 : 0;
         $scores['dkim_pass_rate'] = $dkimPassRate * 0.25;
 
         // Alignment (10%)

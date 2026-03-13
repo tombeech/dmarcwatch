@@ -18,7 +18,7 @@ test('perfect score with reject policy and 100% pass rates and valid DNS', funct
     ]);
 
     // Create reports with all passing
-    $domain->dmarcReports()->create([
+    $report = $domain->dmarcReports()->create([
         'team_id' => $domain->team_id,
         'report_id' => 'test-report-1',
         'reporter_org' => 'google.com',
@@ -29,6 +29,16 @@ test('perfect score with reject policy and 100% pass rates and valid DNS', funct
         'total_messages' => 1000,
         'pass_count' => 1000,
         'fail_count' => 0,
+    ]);
+
+    // Create record with DKIM pass for DKIM pass rate calculation
+    $report->records()->create([
+        'source_ip' => '209.85.220.41',
+        'count' => 1000,
+        'disposition' => 'none',
+        'dkim_result' => 'pass',
+        'spf_result' => 'pass',
+        'header_from' => 'example.com',
     ]);
 
     $result = $this->scorer->score($domain);
@@ -50,7 +60,7 @@ test('low score with none policy and high failure rates', function () {
         'dkim_status' => 'invalid',
     ]);
 
-    $domain->dmarcReports()->create([
+    $report = $domain->dmarcReports()->create([
         'team_id' => $domain->team_id,
         'report_id' => 'test-report-2',
         'reporter_org' => 'google.com',
@@ -61,6 +71,24 @@ test('low score with none policy and high failure rates', function () {
         'total_messages' => 100,
         'pass_count' => 20,
         'fail_count' => 80,
+    ]);
+
+    // Create records: 20 pass DKIM, 80 fail
+    $report->records()->create([
+        'source_ip' => '209.85.220.41',
+        'count' => 20,
+        'disposition' => 'none',
+        'dkim_result' => 'pass',
+        'spf_result' => 'pass',
+        'header_from' => 'example.com',
+    ]);
+    $report->records()->create([
+        'source_ip' => '192.168.1.100',
+        'count' => 80,
+        'disposition' => 'reject',
+        'dkim_result' => 'fail',
+        'spf_result' => 'fail',
+        'header_from' => 'example.com',
     ]);
 
     $result = $this->scorer->score($domain);
