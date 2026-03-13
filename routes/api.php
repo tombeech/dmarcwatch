@@ -19,14 +19,14 @@ Route::prefix('v1/lookup')->middleware('throttle:30,1')->group(function () {
 Route::prefix('v1')
     ->middleware(['auth:sanctum', 'ensure-team-scope', 'ensure-api-access'])
     ->group(function () {
-        Route::apiResource('domains', V1\DomainController::class);
+        Route::apiResource('domains', V1\DomainController::class)->names('api.domains');
         Route::post('domains/{domain}/check-dns', [V1\DomainController::class, 'checkDns']);
         Route::get('domains/{domain}/reports', [V1\ReportController::class, 'domainReports']);
 
-        Route::apiResource('reports', V1\ReportController::class)->only(['index', 'show']);
+        Route::apiResource('reports', V1\ReportController::class)->only(['index', 'show'])->names('api.reports');
 
         Route::apiResource('alert-channels', V1\AlertChannelController::class)
-            ->parameters(['alert-channels' => 'channel']);
+            ->parameters(['alert-channels' => 'channel'])->names('api.alert-channels');
         Route::apiResource('alert-rules', V1\AlertRuleController::class)
-            ->parameters(['alert-rules' => 'rule']);
+            ->parameters(['alert-rules' => 'rule'])->names('api.alert-rules');
     });
