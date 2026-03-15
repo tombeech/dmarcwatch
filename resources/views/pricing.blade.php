@@ -228,8 +228,8 @@
 @push('schema')
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
+    "@@context": "https://schema.org",
+    "@@type": "FAQPage",
     "mainEntity": [
         @foreach([
             ['q' => 'What happens when I reach my report limit on the free plan?', 'a' => 'Reports over your monthly limit are still received and stored, but they will not be processed or displayed until you upgrade. No data is lost.'],
@@ -241,10 +241,10 @@
             ['q' => 'Can I cancel my subscription?', 'a' => 'Yes. You can cancel at any time from your billing page. Your plan will remain active until the end of the current billing period. After that, your account will revert to the free plan.']
         ] as $i => $faq)
         {
-            "@type": "Question",
+            "@@type": "Question",
             "name": "{{ $faq['q'] }}",
             "acceptedAnswer": {
-                "@type": "Answer",
+                "@@type": "Answer",
                 "text": "{{ $faq['a'] }}"
             }
         }{{ $i < 6 ? ',' : '' }}
