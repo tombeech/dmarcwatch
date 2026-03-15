@@ -31,31 +31,31 @@
 
     <style>
         body { font-family: 'Inter', system-ui, sans-serif; }
-        .nav-link { @apply text-sm text-forest-900/70 hover:text-forest-900 transition-colors duration-200; }
+        .nav-link { @@apply text-sm text-forest-900/70 hover:text-forest-900 transition-colors duration-200; }
     </style>
 
     {{-- Schema.org Organization --}}
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Organization",
+        "@@context": "https://schema.org",
+        "@@type": "Organization",
         "name": "DMARCWatch",
         "url": "https://dmarcwatch.app",
         "description": "Email authentication monitoring for teams",
         "parentOrganization": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "Permission Email Ltd",
             "url": "https://dmarcwatch.app"
         },
         "address": {
-            "@type": "PostalAddress",
+            "@@type": "PostalAddress",
             "streetAddress": "Unit 3, Millars Brook",
             "addressLocality": "Wokingham",
             "postalCode": "RG41 2AD",
             "addressCountry": "GB"
         },
         "contactPoint": {
-            "@type": "ContactPoint",
+            "@@type": "ContactPoint",
             "email": "hello@dmarcwatch.app",
             "contactType": "customer service"
         }
