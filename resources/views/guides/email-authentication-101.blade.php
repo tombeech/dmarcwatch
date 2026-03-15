@@ -1,7 +1,4 @@
-@extends('layouts.marketing')
-@section('title', 'Email Authentication 101 — DMARCWatch')
-
-@section('content')
+<x-marketing-layout title="Email Authentication 101 - DMARCWatch" meta-description="A comprehensive overview of email authentication: SPF, DKIM, DMARC, and how they work together to protect your domain.">
 <article class="py-20">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg">
         <a href="/guides" class="text-lime-600 hover:text-lime-700 no-underline">&larr; Back to Guides</a>
@@ -84,4 +81,4 @@
         </div>
     </div>
 </article>
-@endsection
+</x-marketing-layout>

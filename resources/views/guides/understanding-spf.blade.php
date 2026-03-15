@@ -1,7 +1,4 @@
-@extends('layouts.marketing')
-@section('title', 'Understanding SPF Records — DMARCWatch')
-
-@section('content')
+<x-marketing-layout title="Understanding SPF Records - DMARCWatch" meta-description="Learn how SPF works, how to configure it, and how to avoid common pitfalls like exceeding the DNS lookup limit.">
 <article class="py-20">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg">
         <a href="/guides" class="text-lime-600 hover:text-lime-700 no-underline">&larr; Back to Guides</a>
@@ -88,4 +85,4 @@
         </div>
     </div>
 </article>
-@endsection
+</x-marketing-layout>

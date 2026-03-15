@@ -1,7 +1,4 @@
-@extends('layouts.marketing')
-@section('title', 'Features — DMARCWatch')
-
-@section('content')
+<x-marketing-layout title="Features - DMARCWatch" meta-description="Everything you need to manage email authentication across all your domains.">
 <section class="py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
@@ -27,7 +24,7 @@
         </div>
 
         <!-- DNS Monitoring -->
-        <div class="mb-20">
+        <div id="dns" class="mb-20">
             <h2 class="text-2xl font-bold text-forest-900 mb-8">DNS Verification</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 @foreach([
@@ -44,7 +41,7 @@
         </div>
 
         <!-- Alerting -->
-        <div class="mb-20">
+        <div id="alerts" class="mb-20">
             <h2 class="text-2xl font-bold text-forest-900 mb-8">Alerting</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 @foreach([
@@ -61,7 +58,7 @@
         </div>
 
         <!-- Tools -->
-        <div>
+        <div id="tools">
             <h2 class="text-2xl font-bold text-forest-900 mb-8">Built-in Tools</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 @foreach([
@@ -87,4 +84,4 @@
         <a href="{{ route('register') }}" class="bg-lime-400 text-forest-900 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-lime-300 transition">Create Free Account</a>
     </div>
 </section>
-@endsection
+</x-marketing-layout>

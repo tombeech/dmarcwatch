@@ -20,6 +20,7 @@ class SubscriptionSync
             'customer' => $team->stripe_id,
             'status' => 'all',
             'limit' => 5,
+            'expand' => ['data.items'],
         ]);
 
         foreach ($subs->data as $sub) {
@@ -47,12 +48,7 @@ class SubscriptionSync
                 'trial_ends_at' => $sub->trial_end ? Carbon::createFromTimestamp($sub->trial_end) : null,
             ]);
 
-            $localSub->items()->create([
-                'stripe_id' => $item->id,
-                'stripe_product' => $item->price->product,
-                'stripe_price' => $item->price->id,
-                'quantity' => $item->quantity ?? 1,
-            ]);
+            static::syncItems($localSub, $sub);
 
             $team->load('subscriptions');
 
@@ -69,7 +65,9 @@ class SubscriptionSync
         }
 
         $stripe = new StripeClient(config('cashier.secret'));
-        $stripeSub = $stripe->subscriptions->retrieve($subscription->stripe_id);
+        $stripeSub = $stripe->subscriptions->retrieve($subscription->stripe_id, [
+            'expand' => ['items'],
+        ]);
 
         $subscription->stripe_status = $stripeSub->status;
 
@@ -85,6 +83,23 @@ class SubscriptionSync
         }
 
         $subscription->save();
+
+        static::syncItems($subscription, $stripeSub);
+
         $team->load('subscriptions');
+    }
+
+    protected static function syncItems($localSub, $stripeSub): void
+    {
+        $localSub->items()->delete();
+
+        foreach ($stripeSub->items->data as $item) {
+            $localSub->items()->create([
+                'stripe_id' => $item->id,
+                'stripe_product' => $item->price->product,
+                'stripe_price' => $item->price->id,
+                'quantity' => $item->quantity ?? 1,
+            ]);
+        }
     }
 }

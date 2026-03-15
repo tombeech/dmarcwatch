@@ -1,7 +1,4 @@
-@extends('layouts.marketing')
-@section('title', 'DMARC Policy Guide — DMARCWatch')
-
-@section('content')
+<x-marketing-layout title="DMARC Policy Guide - DMARCWatch" meta-description="The path from p=none to p=reject. Learn when and how to tighten your DMARC policy safely.">
 <article class="py-20">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg">
         <a href="/guides" class="text-lime-600 hover:text-lime-700 no-underline">&larr; Back to Guides</a>
@@ -79,4 +76,4 @@
         </div>
     </div>
 </article>
-@endsection
+</x-marketing-layout>

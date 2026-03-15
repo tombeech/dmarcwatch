@@ -1,7 +1,4 @@
-@extends('layouts.marketing')
-@section('title', 'Reading Aggregate Reports — DMARCWatch')
-
-@section('content')
+<x-marketing-layout title="Reading Aggregate Reports - DMARCWatch" meta-description="How to interpret DMARC aggregate report data - sources, pass rates, disposition, and alignment.">
 <article class="py-20">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg">
         <a href="/guides" class="text-lime-600 hover:text-lime-700 no-underline">&larr; Back to Guides</a>
@@ -128,4 +125,4 @@
         </div>
     </div>
 </article>
-@endsection
+</x-marketing-layout>

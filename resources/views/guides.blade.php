@@ -1,7 +1,4 @@
-@extends('layouts.marketing')
-@section('title', 'Guides — DMARCWatch')
-
-@section('content')
+<x-marketing-layout title="Guides - DMARCWatch" meta-description="Learn about email authentication and how to protect your domain.">
 <section class="py-20">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-4xl font-bold text-forest-900 mb-4">Guides</h1>
@@ -23,4 +20,4 @@
         </div>
     </div>
 </section>
-@endsection
+</x-marketing-layout>

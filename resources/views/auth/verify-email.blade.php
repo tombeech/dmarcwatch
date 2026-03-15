@@ -4,8 +4,9 @@
             <x-authentication-card-logo />
         </x-slot>
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-forest-900">Verify your email</h2>
+            <p class="text-sm text-gray-500 mt-1">Please verify your email address by clicking on the link we just emailed to you.</p>
         </div>
 
         @if (session('status') == 'verification-link-sent')
@@ -19,23 +20,23 @@
                 @csrf
 
                 <div>
-                    <x-button type="submit">
+                    <button type="submit" class="w-full bg-lime-400 text-forest-900 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-lime-300 transition">
                         {{ __('Resend Verification Email') }}
-                    </x-button>
+                    </button>
                 </div>
             </form>
 
             <div>
                 <a
                     href="{{ route('profile.show') }}"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="text-sm text-lime-600 hover:text-lime-700 font-medium"
                 >
                     {{ __('Edit Profile') }}</a>
 
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
 
-                    <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ms-2">
+                    <button type="submit" class="text-sm text-lime-600 hover:text-lime-700 font-medium ms-2">
                         {{ __('Log Out') }}
                     </button>
                 </form>

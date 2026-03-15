@@ -1,9 +1,4 @@
-@extends('layouts.marketing')
-
-@section('title', 'DMARCWatch — Take Control of Your Email Authentication')
-@section('description', 'Monitor DMARC, SPF, and DKIM records. Process aggregate reports, identify sending sources, and protect your domain from email spoofing.')
-
-@section('content')
+<x-marketing-layout title="DMARCWatch - Take Control of Your Email Authentication" meta-description="Monitor DMARC, SPF, and DKIM records. Process aggregate reports, identify sending sources, and protect your domain from email spoofing.">
 <!-- Hero -->
 <section class="bg-forest-900 text-white py-20 lg:py-28">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,4 +99,4 @@
         <a href="{{ route('register') }}" class="bg-lime-400 text-forest-900 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-lime-300 transition">Create Free Account</a>
     </div>
 </section>
-@endsection
+</x-marketing-layout>

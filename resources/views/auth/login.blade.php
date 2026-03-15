@@ -4,6 +4,11 @@
             <x-authentication-card-logo />
         </x-slot>
 
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-forest-900">Welcome back</h2>
+            <p class="text-sm text-gray-500 mt-1">Sign in to your DMARCWatch account</p>
+        </div>
+
         <x-validation-errors class="mb-4" />
 
         @session('status')
@@ -16,32 +21,38 @@
             @csrf
 
             <div>
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <x-label for="email" value="{{ __('Email') }}" class="text-sm font-medium text-gray-700" />
+                <x-input id="email" class="block mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             </div>
 
             <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
+                <div class="flex items-center justify-between">
+                    <x-label for="password" value="{{ __('Password') }}" class="text-sm font-medium text-gray-700" />
+                    @if (Route::has('password.request'))
+                        <a class="text-xs text-lime-600 hover:text-lime-700 font-medium" href="{{ route('password.request') }}">
+                            Forgot password?
+                        </a>
+                    @endif
+                </div>
+                <x-input id="password" class="block mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500" type="password" name="password" required autocomplete="current-password" />
             </div>
 
             <div class="block mt-4">
                 <label for="remember_me" class="flex items-center">
-                    <x-checkbox id="remember_me" name="remember" />
+                    <x-checkbox id="remember_me" name="remember" class="rounded border-gray-300 text-lime-600 focus:ring-lime-500" />
                     <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
-                @endif
+            <div class="mt-6">
+                <button type="submit" class="w-full bg-lime-400 text-forest-900 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-lime-300 transition">
+                    Sign in
+                </button>
+            </div>
 
-                <x-button class="ms-4">
-                    {{ __('Log in') }}
-                </x-button>
+            <div class="mt-6 text-center">
+                <span class="text-sm text-gray-500">Don't have an account?</span>
+                <a href="{{ route('register') }}" class="text-sm text-lime-600 hover:text-lime-700 font-medium ml-1">Create one</a>
             </div>
         </form>
     </x-authentication-card>

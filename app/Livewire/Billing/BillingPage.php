@@ -11,13 +11,22 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class BillingPage extends Component
 {
+    public bool $showUpgradeModal = false;
+
+    public string $pendingPlan = '';
+
+    public string $pendingPrice = '';
+
+    public int $pendingAmount = 0;
+
     public function subscribe(string $plan): void
     {
         $team = auth()->user()->currentTeam;
+        $suffix = CurrencyHelper::stripeCurrencySuffix();
 
         $priceIds = [
-            'pro' => config('dmarcwatch.stripe.prices.pro_monthly'),
-            'enterprise' => config('dmarcwatch.stripe.prices.enterprise_monthly'),
+            'pro' => config("dmarcwatch.stripe.prices.{$suffix}.pro_monthly"),
+            'enterprise' => config("dmarcwatch.stripe.prices.{$suffix}.enterprise_monthly"),
         ];
 
         if (! isset($priceIds[$plan])) {
@@ -35,6 +44,82 @@ class BillingPage extends Component
         } catch (\Exception $e) {
             session()->flash('error', 'Unable to create checkout: ' . $e->getMessage());
         }
+    }
+
+    public function previewUpgrade(string $plan): void
+    {
+        $pricing = CurrencyHelper::pricing();
+        $suffix = CurrencyHelper::stripeCurrencySuffix();
+
+        $priceMap = [
+            'pro' => [
+                'price_id' => config("dmarcwatch.stripe.prices.{$suffix}.pro_monthly"),
+                'amount' => $pricing['pro'],
+            ],
+            'enterprise' => [
+                'price_id' => config("dmarcwatch.stripe.prices.{$suffix}.enterprise_monthly"),
+                'amount' => $pricing['enterprise'],
+            ],
+        ];
+
+        if (! isset($priceMap[$plan])) {
+            return;
+        }
+
+        $this->pendingPlan = $plan;
+        $this->pendingPrice = $priceMap[$plan]['price_id'];
+        $this->pendingAmount = $priceMap[$plan]['amount'];
+        $this->showUpgradeModal = true;
+    }
+
+    public function confirmUpgrade(): void
+    {
+        $team = auth()->user()->currentTeam;
+        $subscription = $team->subscription('default');
+
+        if (! $subscription || ! $this->pendingPrice) {
+            return;
+        }
+
+        try {
+            $subscription->swap($this->pendingPrice);
+            SubscriptionSync::syncState($team);
+            $this->showUpgradeModal = false;
+            session()->flash('success', 'Your plan has been updated successfully.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Unable to change plan: ' . $e->getMessage());
+        }
+    }
+
+    public function cancelUpgrade(): void
+    {
+        $this->showUpgradeModal = false;
+        $this->pendingPlan = '';
+        $this->pendingPrice = '';
+        $this->pendingAmount = 0;
+    }
+
+    public function changePlan(string $plan): void
+    {
+        $team = auth()->user()->currentTeam;
+        $subscription = $team->subscription('default');
+
+        if ($plan === 'free') {
+            if ($subscription) {
+                $subscription->cancel();
+                SubscriptionSync::syncState($team);
+            }
+
+            return;
+        }
+
+        if ($subscription && $subscription->active()) {
+            $this->previewUpgrade($plan);
+
+            return;
+        }
+
+        $this->subscribe($plan);
     }
 
     public function manageBilling(): void
@@ -79,6 +164,15 @@ class BillingPage extends Component
                     // Silent fail
                 }
             }
+            session()->flash('success', 'Your subscription is now active!');
+        }
+
+        if (request('portal')) {
+            session()->flash('success', 'Billing portal session complete.');
+        }
+
+        if (request('downgraded')) {
+            session()->flash('success', 'Your plan has been downgraded.');
         }
     }
 
