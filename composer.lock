@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bfb568e0b4532fd505f82de7f29c762f",
+    "content-hash": "0e0dfcdc6964575799f612ca6aaf1ab2",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3357,11 +3357,17 @@
         },
         {
             "name": "permission-email/saas-management",
-            "version": "dev-main",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:tombeech/saas-management.git",
+                "reference": "81010227b9bc0bd578b531f005a96f1e0d07b082"
+            },
             "dist": {
-                "type": "path",
-                "url": "../packages/saas-management",
-                "reference": "512382f09109f9bcaee87370c5835b6334ae7796"
+                "type": "zip",
+                "url": "https://api.github.com/repos/tombeech/saas-management/zipball/81010227b9bc0bd578b531f005a96f1e0d07b082",
+                "reference": "81010227b9bc0bd578b531f005a96f1e0d07b082",
+                "shasum": ""
             },
             "require": {
                 "illuminate/http": "^12.0",
@@ -3386,9 +3392,7 @@
                 "proprietary"
             ],
             "description": "Shared SaaS management API package for Laravel apps",
-            "transport-options": {
-                "relative": true
-            }
+            "time": "2026-03-16T07:39:46+00:00"
         },
         {
             "name": "php-di/invoker",
@@ -11269,9 +11273,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "permission-email/saas-management": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
