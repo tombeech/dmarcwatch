@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "792f3653c63928f626237a71588eb2a4",
+    "content-hash": "bfb568e0b4532fd505f82de7f29c762f",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3354,6 +3354,41 @@
                 "source": "https://github.com/paragonie/constant_time_encoding"
             },
             "time": "2025-09-24T15:06:41+00:00"
+        },
+        {
+            "name": "permission-email/saas-management",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../packages/saas-management",
+                "reference": "512382f09109f9bcaee87370c5835b6334ae7796"
+            },
+            "require": {
+                "illuminate/http": "^12.0",
+                "illuminate/routing": "^12.0",
+                "illuminate/support": "^12.0",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "PermissionEmail\\SaasManagement\\SaasManagementServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PermissionEmail\\SaasManagement\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Shared SaaS management API package for Laravel apps",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "php-di/invoker",
@@ -11234,7 +11269,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "permission-email/saas-management": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
