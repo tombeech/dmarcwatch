@@ -64,7 +64,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#86efac\" \"php artisan serve --host=0.0.0.0 --port=8688\" \"php artisan horizon\" \"php artisan schedule:work\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,horizon,scheduler,logs,vite --kill-others"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#86efac,#fbbf24\" \"php artisan serve --host=0.0.0.0 --port=8688\" \"php artisan horizon\" \"php artisan schedule:work\" \"php artisan pail --timeout=0\" \"npm run dev\" \"stripe listen --forward-to http://localhost:8688/stripe/webhook\" --names=server,horizon,scheduler,logs,vite,stripe --kill-others"
         ],
         "test": [
             "@php artisan config:clear --ansi",
