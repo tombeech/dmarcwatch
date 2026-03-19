@@ -1,7 +1,9 @@
 <x-marketing-layout title="DMARCWatch - Take Control of Your Email Authentication" meta-description="Monitor DMARC, SPF, and DKIM records. Process aggregate reports, identify sending sources, and protect your domain from email spoofing.">
 <!-- Hero -->
-<section class="bg-forest-900 text-white py-20 lg:py-28">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<section class="bg-forest-900 text-white py-20 lg:py-28 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(74,222,128,0.06)_0%,_transparent_50%)]"></div>
+    <div class="absolute inset-0 opacity-15" style="background-image: url('{{ asset('images/bg2.svg') }}'); background-attachment: fixed; background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto text-center">
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
                 Take Control of Your <span class="text-lime-400">Email Authentication</span>
